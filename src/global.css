@@ -14,6 +14,13 @@
 
 }
 
+/* ao clicar em qualquer textarea(ate em button funciona) como se
+eu fosse digitar, fica uma bordinha verde */
+:focus {
+    outline: transparent;
+    box-shadow: 0 0 0 2px var(--green-500);
+}
+
 
 * {
     margin: 0;
