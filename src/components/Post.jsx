@@ -1,34 +1,49 @@
+import { format, formatDistanceToNow } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
+
 import { Avatar } from './Avatar';
 import { Comment } from './Comment';
 import styles from './Post.module.css';
 
-export function Post(props){
+export function Post({ author, publishedAt, content }){
+
+    const publishedDateFormatted = format(publishedAt, "d 'de' LLLL 'às' HH:mm'h'", {
+       locale: ptBR,
+    })
+    // usando a lib date-fns, temos varias configs para determinar como 
+    // queremos mostrar as datas. ele viu na documentation da lib. 
+    // colocamos entre aspas simples o que nao faz parte do format
+
+    const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
+        locale: ptBR,
+        addSuffix: true, // adiciona um sufixo(no brasil seria prefixo). ex: de '8 dias' fica pra 'há 8 dias'
+    })
+
+
     return(
         <article className={styles.post}>
             <header>
                 <div className={styles.author}>
-                    <Avatar src="https://github.com/Lucas-Gades.png"/>
+                    <Avatar src={author.avatarUrl}/>
                     <div className={styles.authorInfo}>
-                        <strong>Raul Silveira</strong>
-                        <span>Estudante de TI</span>
+                        <strong>{author.name}</strong>
+                        <span>{author.role}</span>
                     </div>
                 </div>  
             
-                <time title='12 de Setembro às 19:12h' dateTime="2024-10-12 19:12:25">Publicado há 1h</time>
+                <time title={publishedDateFormatted} dateTime={publishedAt.toISOString()}>
+                    {publishedDateRelativeToNow}
+                </time>
             </header>
 
             <div className={styles.content}>
-                <p>Fala galeraa 👋</p>
-
-                <p>Acabei de subir mais um projeto no meu portifa. É um projeto que fiz no NLW Return, evento da Rocketseat. O nome do projeto é DoctorCare 🚀</p>
-
-                <p>👉 {' '}<a href="">jane.design/doctorcare</a></p>
-
-                <p>
-                    <a href="">#novoprojeto</a>{' '}
-                    <a href="">#nlw</a>{' '}
-                    <a href="">#rocketseat</a>
-                </p>
+                {content.map(line => {
+                    if (line.type == 'paragraph') {
+                        return <p>{line.content}</p>;
+                    } else if (line.type == 'link') {
+                        return <p><a href="#">{line.content}</a></p>
+                    }
+                })}
             </div>
 
             <form className={styles.commentForm}>
