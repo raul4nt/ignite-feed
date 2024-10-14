@@ -126,3 +126,7 @@ proprio button), setamos o visibility como visible, ai o button aparece */
 .commentForm button[type=submit]:hover {
     background: var(--green-300);
 }
+
+.commentList {
+    margin-top: 2rem;
+}
