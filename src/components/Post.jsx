@@ -11,13 +11,14 @@ import { useState } from 'react';
 
 export function Post({ author, publishedAt, content }){
     const [comments, setComments] = useState([
-        1,
-        2,
+       'Post muito bacana, hein?'
         // o UseState do react é interssante usarmos destruturaçao. ele recebe primeiro
         // o valor q ele possuirá de começo, e depois uma funçao(que escolhemos o nome setComments),
         // que vai ser a funçao usada pra adicionarmos algo no valor default.
         // ou seja, manipularemos os comments atraves de setComments.
     ])
+
+    const [newCommentText, setNewCommentText] = useState('')
 
     const publishedDateFormatted = format(publishedAt, "d 'de' LLLL 'às' HH:mm'h'", {
        locale: ptBR,
@@ -37,8 +38,8 @@ export function Post({ author, publishedAt, content }){
         // como default. neste caso, quando usamos o onSubmit em html, o default
         // é, apos clicar no botao de submit ou apertar enter, ele nos redirecionar pra 
         // outra pagina. mas nao é o que queremos, por isso, usamos o preventDefault.
-        
-        setComments([...comments, comments.length + 1]);
+        // const newCommentText = event.target.comment.value
+        setComments([...comments, newCommentText]);
         // ... = spread operator. copia o que ja existe. neste caso, tem 1, 2 lá
         // na variável comments(array). entao ele pega tudo isso, e ai adiciona mais um
         // pois estamos usando o comments.lenght + 1. se em comments tem 1 e 2, a lenght é 
@@ -46,7 +47,21 @@ export function Post({ author, publishedAt, content }){
         // nesse "setador" do UseState do react sempre devemos passar o novo valor q ele receberá,
         // e nao apenas um acrescimo. por isso, precisamos recuperar o valor antigo(uasndo o ...comments),
         // e ai sim acrescentar algo.
-        
+        setNewCommentText('')
+    }
+
+    function handleNewCommentChange() {
+        setNewCommentText(event.target.value)
+    }
+
+    function deleteComment(commentToDelete) {
+        const commentsWithoutDeletedOne = comments.filter(comment => {
+            return comment !== commentToDelete
+        }) 
+        // gerar uma nova lista deixando apenas os comentarios que sejam diferentes do comentario
+        // que eu quero deletar
+
+        setComments(commentsWithoutDeletedOne)
     }
 
 
@@ -69,9 +84,9 @@ export function Post({ author, publishedAt, content }){
             <div className={styles.content}>
                 {content.map(line => {
                     if (line.type == 'paragraph') {
-                        return <p>{line.content}</p>;
+                        return <p key={line.content}>{line.content}</p>;
                     } else if (line.type == 'link') {
-                        return <p><a href="#">{line.content}</a></p>
+                        return <p key={line.content}><a href="#">{line.content}</a></p>
                     }
                 })}
             </div>
@@ -79,8 +94,12 @@ export function Post({ author, publishedAt, content }){
             <form onSubmit={handleCreateNewComment} className={styles.commentForm}>
                 <strong>Deixe seu feedback</strong>
 
-                <textarea 
+                <textarea
+                    name="comment"
                     placeholder='Deixe um comentário'
+                    value={newCommentText}
+                    onChange={handleNewCommentChange}
+                    // monitora toda vez que alterar o conteudo
                 />
 
                 <footer>
@@ -90,7 +109,7 @@ export function Post({ author, publishedAt, content }){
 
             <div className={styles.commentList}>
                 {comments.map(comment => {
-                    return <Comment />
+                    return <Comment key={comment} content={comment} onDeleteComment={deleteComment}/>
                 })}
             </div>
 
