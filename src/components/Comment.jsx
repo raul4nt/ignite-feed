@@ -1,11 +1,32 @@
 import { ThumbsUp, Trash } from 'phosphor-react';
 import styles from './Comment.module.css';
 import { Avatar } from './Avatar';
+import { useState } from 'react';
 
 export function Comment({ content, onDeleteComment }) {
 
+    const [likeCount, setLikeCount] = useState(0);
+
     function handleDeleteComment() {
         onDeleteComment(content)
+    }
+
+    // function handleLikeComment() {
+    //     setLikeCount(likeCount + 1)
+    // }
+
+    function handleLikeComment() {
+        setLikeCount((state) => {
+            return state + 1
+        })
+        // podemos usar o set do useState de duas formas: como funçao(este codigo), 
+        // ou da maneira que está comentado acima. se usarmos da maneira comentada acima, 
+        // o react cria outro contexto pra executar o likeCount. logo, o like nao aumenta logo
+        // quando o código é executado, e sim apos a funçao inteira ser executada. usando neste padrao
+        // de arrow function, podemos pegar o valor mais recente de likes e alterar ele diretamente
+        // neste caso, como precisamos saber o valor antigo de likes e alterar baseado nele, é interessante
+        // usarmos dessa forma
+        // isso é Closure, no react
     }
 
     return (
@@ -29,9 +50,9 @@ export function Comment({ content, onDeleteComment }) {
                 </div>
 
             <footer>
-                <button>
+                <button onClick={handleLikeComment}>
                     <ThumbsUp />
-                    Aplaudir <span>20</span>
+                    Aplaudir <span>{likeCount}</span>
                 </button>
             </footer>
             </div>

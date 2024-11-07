@@ -51,7 +51,18 @@ export function Post({ author, publishedAt, content }){
     }
 
     function handleNewCommentChange() {
+        event.target.setCustomValidity('')
+        // setando o setCustomValidity pra um valor vazio quando identificarmos
+        // que hovue alguma mudança no campo de comentario
+        // se nao tivesse isso, ficaria dando a mensagem Esse campo é obrigatorio! pra sempre
+        // mesmo escrevendo algo
+        // é como se dissemos: ó, nao ta mais com erro agora
         setNewCommentText(event.target.value)
+    }
+
+    function handleNewCommentInvalid() {
+        event.target.setCustomValidity('Esse campo é obrigatório!')
+        // personaliza mensagem de erro do required
     }
 
     function deleteComment(commentToDelete) {
@@ -64,6 +75,8 @@ export function Post({ author, publishedAt, content }){
         setComments(commentsWithoutDeletedOne)
     }
 
+    const isNewCommentEmpty = newCommentText.length === 0
+    {/* desabilitando o button caso nao tenha nada escrito no campo de comentario(lenght = 0) */}
 
     return(
         <article className={styles.post}>
@@ -100,10 +113,14 @@ export function Post({ author, publishedAt, content }){
                     value={newCommentText}
                     onChange={handleNewCommentChange}
                     // monitora toda vez que alterar o conteudo
+                    onInvalid={handleNewCommentInvalid}
+                    // chamada sempre que o html identificar que tentamos realizar um submit
+                    // mas o texto era inválido(neste caso, sera era vazio)
+                    required
                 />
 
                 <footer>
-                    <button type='submit'>Publicar</button>
+                    <button type='submit' disabled={isNewCommentEmpty}>Publicar</button>
                 </footer>
             </form>
 
